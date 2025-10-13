@@ -9,13 +9,32 @@ import numpy as np # we will need numpy for some array manipulations
 
 # TODO Loading images in grey and color and store them in the variables 'img_gray' and 'img_color'.
 
+img_gray = cv2.imread("tutorials/data/images/logo.png", cv2.IMREAD_GRAYSCALE)
+img_color = cv2.imread("tutorials/data/images/logo.png", cv2.IMREAD_COLOR)
+
 # TODO Check if images have been loaded successfully.
+
+if img_gray is None:
+    raise FileNotFoundError("image_gray file not found")
+if img_color is None:
+    raise FileNotFoundError("image_color file not found")
 
 ## Image data access
 
 # TODO Do some print out about the loaded data using 'type', 'dtype' and 'shape'.
 
+print(type(img_gray))
+print(type(img_color))
+
+print(img_gray.dtype)
+print(img_color.dtype)
+
+print(img_gray.shape)
+print(img_color.shape)
+
 # TODO Continue with the grayscale image by copying it to a new variable 'img'.
+
+img = img_gray.copy()
 
 # TODO Extract the size or resolution of this image.
 
@@ -24,20 +43,39 @@ import numpy as np # we will need numpy for some array manipulations
 ## Then, you can use the variables 'height' and 'width' in your code instead of hardcoding values. 
 ## This makes your code flexible and independent from the actual image size.
 
+height = img.shape[0]
+width = img.shape[1]
+last_dim = img.shape[-1]
+
+
 # TODO Resize the image to a small size (7x5) as we will later print out the pixel values.
+
+img = cv2.resize(img, (7,5))
 
 # HINT: Row and column access, see https://numpy.org/doc/stable/reference/arrays.ndarray.html for 
 # general access on ndarrays
 
 # TODO Print first row
 
+print(img.shape[0])
+
 # TODO Print first column
+
+print(img.shape[1])
 
 # TODO Now continue with the color image by copying it to the variable 'img'.
 
+img = img_color.copy()
+
 # TODO Set an area of the image to black by looping over the pixels and setting the pixel values to [0,0,0].
 
+for x in range (20):
+    for y in range(width):
+        img[x][y] = [0, 0, 0]
+
 # TODO Create a window with 'namedWindow' and show the image and wait until key pressed.
+
+
 
 # TODO Find all used colors in the image by first reshaping the image to a list of pixels with 'reshape' 
 # (which is a numpy function that can be applied to images as they are stored as 'ndarrays').
@@ -52,5 +90,11 @@ import numpy as np # we will need numpy for some array manipulations
 
 # TODO Load the image again and show it in a window.
 
+cv2.imshow("gray image", img_gray)
+cv2.imshow("color image", img_color)
+cv2.imshow("copy image", img)
+
 # TODO Show the original image in another window to illustrate the effect of the copy operation. Check
 # if you have used 'copy' or if you just stored a reference to the original image using the '=' operator.
+
+cv2.waitKey(0)

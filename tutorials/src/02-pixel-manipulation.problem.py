@@ -26,11 +26,11 @@ if img_color is None:
 print(type(img_gray))
 print(type(img_color))
 
-print(img_gray.dtype)
-print(img_color.dtype)
+print("gray dtype:", img_gray.dtype)
+print("color dtype:", img_color.dtype)
 
-print(img_gray.shape)
-print(img_color.shape)
+print("gray shape:", img_gray.shape)
+print("color shape:", img_color.shape)
 
 # TODO Continue with the grayscale image by copying it to a new variable 'img'.
 
@@ -57,7 +57,7 @@ img = cv2.resize(img, (7,5))
 
 # TODO Print first row
 
-print(img.shape[0])
+print("First row:", img[0])
 
 # TODO Print first column
 
@@ -75,18 +75,32 @@ for x in range (20):
 
 # TODO Create a window with 'namedWindow' and show the image and wait until key pressed.
 
+cv2.namedWindow("copy image", cv2.WINDOW_AUTOSIZE)
+cv2.imshow("copy image", img)
+cv2.waitKey(0)
 
 
 # TODO Find all used colors in the image by first reshaping the image to a list of pixels with 'reshape' 
 # (which is a numpy function that can be applied to images as they are stored as 'ndarrays').
 
+pixels = img.reshape(-1, 3)  
+
 # TODO Use 'np.unique' to find all unique colors in the reshaped image. Use the parameter 'axis=0' to
 # search for unique rows (pixels) instead of unique single values.
+
+unique_colors = np.unique(pixels, axis=0)
+print("Number of unique colors:", len(unique_colors))
+
 
 # TODO Copy one part of an image into another one by first defining a region of interest (ROI) and then storing 
 # the data in a temporal variable before copying it to another part of the image.
 
+roi = img[50:100, 50:100].copy()
+img[0:50, 0:50] = roi
+
 # TODO Save the image to a file using 'imwrite'.
+
+cv2.imwrite("output_logo.png", img)
 
 # TODO Load the image again and show it in a window.
 

@@ -40,17 +40,35 @@ font_size_small = 1
 font_size_smaller = 0.6
 font = cv2.FONT_HERSHEY_SIMPLEX
 
-# TODO Define  RGB colors as variables
+# TODO Define RGB colors as variables
+
+blue = (255, 0, 0)
+red = (0, 0, 255)
+green = (0, 255, 0)
+black = (0, 0, 0)
+white = (255, 255, 255)
 
 # Exemplary color conversion (only for the class), tests usage of cv2.cvtColor
 
+#bgr_color = np.uint8([[[255, 0, 0]]])
+#hsv_color = cv2.cvtColor(bgr_color, cv2.COLOR_BGR2HSV)
+#print("Blue in BGR and HSV:")
+#print(bgr_color)
+#print(hsv_color)
+#bgr_color = np.uint8([[[0, 0, 255]]])
+#hsv_color = cv2.cvtColor(bgr_color, cv2.COLOR_BGR2HSV)
+#print("Red in BGR and HSV:")
+#print(bgr_color)
+#print(hsv_color)
+
 # TODO Enter some default values and uncomment
-# hue =
+hue = 120
 hue_range = 10
-# saturation =
+saturation = 100
 saturation_range = 100
-# value =
+value = 100
 value_range = 100
+
 
 
 # Callback to pick the color on double click
@@ -62,7 +80,16 @@ def color_picker(event, x, y, flags, param):
         saturation = int(s)
         value = int(v)
         print("New color selected:", (hue, saturation, value))
+        
 
+win_orig = 'Original'
+cv2.namedWindow(win_orig)
+cv2.setMouseCallback(win_orig, color_picker)
+
+title_masked_window = "Masked image"
+cv2.namedWindow(title_masked_window)
+title_mask_window = "Mask image"
+cv2.namedWindow(title_mask_window)
 
 while True:
     # Get video frame (always BGR format!)
@@ -72,24 +99,61 @@ while True:
         img = frame.copy()
 
         # TODO Compute color ranges for display
+    
+        lower = np.array([hue - hue_range, saturation - saturation_range, value - value_range])
+        upper = np.array([hue + hue_range, saturation + saturation_range, value + value_range])
+
+        HSV_one_pixel_img = np.zeros((1, 1, 3), np.uint8)
+        HSV_one_pixel_img[0, 0] = (hue, saturation, value)
+        selection_bgr_array = cv2.cvtColor(HSV_one_pixel_img, cv2.COLOR_HSV2BGR)[0, 0]
+        selection_BGR = (int(selection_bgr_array[0]), int(selection_bgr_array[1]), int(selection_bgr_array[2]))
+    
 
         # TODO Draw selection color circle and text for HSV values
 
+        img = cv2.circle(img, (width - 80, height - 80), 30,(selection_BGR), -1)
+
         # TODO Convert to HSV
-        hsv = "TODO: replace this with the conversion code"
+        hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
 
         # TODO Create a bitwise mask
 
+        mask = cv2.inRange(hsv, lower, upper)
+
         # TODO Apply mask
+        
+        result = cv2.bitwise_and(img, img, mask=mask)
 
         # TODO Show the original image with drawings in one window
 
+        cv2.imshow(win_orig, img)
+   
+   
+
         # TODO Show the masked image in another window
 
+        cv2.imshow(title_masked_window, result)
+     
         # TODO Show the mask image in another window
+        
+        cv2.imshow(title_mask_window, mask)
 
         # TODO Deal with keyboard input
-
+        key = cv2.waitKey(10)
+        if key == ord("q"):
+            break
+        if key == ord("h"):
+            hue -= 1
+        if key == ord("H"):
+            hue += 1
+        if key == ord("s"):
+            saturation -= 1
+        if key == ord("S"):
+            saturation += 1
+        if key == ord("v"):
+            value -= 1
+        if key == ord("V"):
+            value += 1
     else:
         print("Could not start video camera")
         break

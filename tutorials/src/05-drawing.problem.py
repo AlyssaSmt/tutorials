@@ -27,7 +27,6 @@ font = cv2.FONT_HERSHEY_SIMPLEX
 # TODO Create a window and display the image and jump to the last task and display the image for debugging 
 # before you implement the drawing tasks
 
-
 # TODO Draw a green diagonal cross over the image using 'line'
 
 # TODO Draw a circle using 'circle'

@@ -40,6 +40,28 @@ mask = cv2.inRange(hsv, lower_green, upper_green)
 # See https://docs.opencv.org/master/db/df6/tutorial_erosion_dilatation.html
 # for morphological operations in OpenCV
 
+def morph_shape(val):
+    if val == 0:
+        return cv2.MORPH_RECT
+    elif val == 1:
+        return cv2.MORPH_CROSS
+    elif val == 2:
+        return cv2.MORPH_ELLIPSE
+    
+
+def dilation(img, size, shape):
+    kernel = cv2.getStructuringElement(shape, (2 * size + 1, 2 * size + 1), (size, size))
+    return cv2.dilate(img, kernel)
+
+def opening(img, size, shape):
+    kernel = cv2.getStructuringElement(shape, (2 * size + 1, 2 * size + 1), (size, size))
+    return cv2.morphologyEx(img, cv2.MORPH_OPEN, kernel)
+
+def closing(img, size, shape):
+    kernel = cv2.getStructuringElement(shape, (2 * size + 1, 2 * size + 1), (size, size))
+    return cv2.morphologyEx(img, cv2.MORPH_CLOSE, kernel)
+
+
 # TODO Find connected components, see 
 # https://docs.opencv.org/4.x/d3/dc0/group__imgproc__shape.html#ga107a78bf7cd25dec05fb4dfc5c9e765f for documentation
 

@@ -12,13 +12,13 @@ import time
 def convolution_with_opencv(image, kernel):
     # Flip the kernel as opencv filter2D function is a
     # correlation not a convolution
-
+    kernel = cv2.flip(kernel, -1)
     # When ddepth=-1, the output image will have the same depth as the source.
-
+    ddepth =  -1
     # Run filtering
-
+    output = cv2.filter2D(image, ddepth, kernel)
     # Return result
-    return
+    return output
 
 
 def show_kernel(kernel):
@@ -61,15 +61,16 @@ if image is None:
 # image = cv2.resize(image, (320,213))
 
 # TODO Define kernel size
-kernel_size = "TODO: define this variable"
+kernel_size = 31
 
 # TODO Define Gaussian standard deviation (sigma). If it is non-positive,
 # It is computed from kernel_size as
 # sigma = 0.3*((ksize-1)*0.5 - 1) + 0.8
-sigma = "TODO: define this variable"
+sigma = 6
 
 # TODO Define the kernel using OpenCV with getGaussianKernel and create 2D kernel from it
-kernel = "TODO: define this variable"
+kernel1D = cv2.getGaussianKernel(kernel_size, sigma)
+kernel = np.transpose(kernel1D) * kernel1D
 
 # Visualize the kernel
 show_kernel(kernel)
@@ -77,12 +78,12 @@ show_kernel(kernel)
 # TODO Run convolution and measure the time it takes using the time module 
 # (see https://www.w3schools.com/python/ref_module_time.asp for reference)
 # Start time to calculate computation duration
-start = "TODO: define this variable"
+start = time.time()
 # Run the convolution and write the resulting image into the result variable
-result = "TODO: define this variable"
+result = convolution_with_opencv(image,kernel)
 
 # End time after computation
-end = "TODO: define this variable"
+end = time.time()
 
 # Print timing results
 print(

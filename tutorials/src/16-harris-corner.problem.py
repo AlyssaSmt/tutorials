@@ -15,6 +15,19 @@ def show_images_side_by_side(img_A, img_B):
 
 # TODO Do a non-maximum suppression
 def do_non_maxima_suppression(img, window_size):
+
+    h, w = img.shape
+    result = np.zeros((h, w), np.uint8)
+    offset = int((window_size - 1) / 2)
+
+    for y in range(offset, h - 1 - offset):
+        for x in range(offset, w - 1 - offset):
+            window = img[y - offset:y + 1 + offset, x - offset:x + 1 + offset]
+            min_val, max_val, min_loc, max_loc = cv2.minMaxLoc(window)
+            if max_loc == (offset, offset):
+                result[y, x] = img[y, x]
+
+    return result
     # Loop over each pixel in the image and keep pixel only if
     # it is maximal in a window with window_size
     foo = 0  # TODO Remove this line (it is just here that the script is running)
@@ -30,20 +43,23 @@ block_size = 2
 ksize = 3
 k = 0.04
 # TODO Create a greyscale image for the corner detection
-
+img_gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 # TODO Convert to floating point image
-
+img_float = np.float32(img_gray)
 # TODO Harris corner detection using OpenCV method cornerHarris
+harris_corner_img = cv2.cornerHarris(img_float, block_size, ksize, k)
 
 # TODO Run non-maximum suppression to find isolated corner points
-
+img_suppressed = do_non_maxima_suppression(harris_corner_img, 5)
 # TODO Dilate resulting image for increasing the corner size so that
 # they become more visible than a single pixel
-
+img_dilated = cv2.dilate(img_suppressed, None)
 # TODO Threshold for an optimal value, it may vary depending on the image
 # and set corner pixels in the original image to a distinct color
 # HINT: use something like "img[corner_img > threshold] = color" instead
 # of a draw function to keep it simple
+img[img_dilated > 0.01 * img_dilated.max()] = [0, 0, 255]
+
 
 # Create window
 window_name = "Corner demo"
@@ -51,7 +67,7 @@ cv2.namedWindow(window_name, cv2.WINDOW_GUI_NORMAL)
 
 # Show resulting images
 # TODO Replace second image with the corner response image
-show_images_side_by_side(img, img)
+show_images_side_by_side(img, cv2.cvtColor(img_suppressed, cv2.COLOR_GRAY2BGR))
 
 # Wait for key to be pressed and close all windows
 cv2.waitKey(0)
